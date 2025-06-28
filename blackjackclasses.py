@@ -33,18 +33,12 @@ class CardDeck:
         return self.cardDeck
 
 
-    # TODO: This has do shuffle good, find optimal way later.
+    # TODO: This has to shuffle good, find optimal way later, currently use Fisher-Yates Shuffle
     def shuffle(self):
-        randomValue = 0
         
-
-        for card in range(len(self.cardDeck)):
-
-            randomValue: int = random.randint(0, 10000)
-            index: int = (randomValue) % 43
-                
-            self.cardDeck[card] = self.cardDeck[index]
-            self.cardDeck[index] = self.cardDeck[card]
+        for i in range(len(self.cardDeck)-1, 0, -1):
+            j: int = random.randint(0, i)
+            self.cardDeck[i], self.cardDeck[j] = self.cardDeck[j], self.cardDeck[i]
 
 
     def drawCard(self):
@@ -55,13 +49,15 @@ class CardDeck:
 
 
 class Player:
-    def __init__(self, deck):
+    def __init__(self):
         self.hand: list = []
         self.sum = 0
 
     def newCard(self, deck):
-        card = deck.getDeck[0]
+        card = deck.drawCard()
         self.hand.append(card)
+        self.sum += card.value
+
         
 
 
