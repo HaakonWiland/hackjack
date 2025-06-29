@@ -1,5 +1,34 @@
 from blackjackclasses import Card, CardDeck, Player
 
+def playHand(deck : CardDeck, handDir, dealer: Player): 
+    while not handDir["done"] and handDir["sum"] <= 21:
+        print(f"DEALER: {dealer.hand[0]}, {dealer.hand[0].value}\n")
+        print(f"What do you want to do?\n")
+        choice = input("(H) Hit \n(S) Stand\n")
+
+        match choice:
+            case "H":
+                card = deck.drawCard()
+                handDir["cards"].append(card)
+                handDir["sum"] += card.value
+                print(f"You draw {card}, new hand: {handDir["cards"]}, new sum: {handDir["sum"]}\n")
+
+                if handDir["sum"] == 21:
+                    print(f"BLACKJACK! player wins, house loses.")
+                    handDir["done"] = True
+                elif handDir["sum"] > 21:
+                    print(f"Player busts, house wins.")
+                    handDir["done"] = True
+
+            case "S":
+                print(f"Player chose to stand.")
+                handDir["done"] = True
+
+def playDealer(deck: CardDeck, dealer: Player):
+    while dealer.sum <= 16:
+        dealer.newCard(deck)
+        print(f"DEALERS new hand: {dealer.hand}, {dealer.sum}")
+
 
 ## Main game loop ##
 def blackjackGame():
@@ -18,6 +47,7 @@ def blackjackGame():
     player.newCard(deck)
     print(f"PLAYER: {player.hand}, {player.sum}")
 
+    # TODO: Fix gameloop by using the playHand and playDealer function.
     while player.sum <= 21:
         choice = input(f"(H) Hit \n(S) Stand \n(D) Double Down \n(SP) Split Pairs \n(Q) Quit\n")
         match choice:
@@ -92,82 +122,44 @@ def blackjackGame():
                     break
 
             case "SP":     
-                if (player.hand[0] != player.hand[1]):
+                if (player.hand[0].value != player.hand[1].value):
                     print(f"You do not have equal values, you can not split!")
+                    continue
 
                 print("You choose to Split Pairs! Your hand has been split into two different bets.")
-                hand1, hand2 = player.hand[0], player.hand[1]
-                hand1Sum, hand2Sum = player.hand[0].value , player.hand[1].value 
+
+                splitHands = [
+                    {"cards": [player.hand[0]], "sum": player.hand[0].value, "done": False},
+                    {"cards": [player.hand[1]], "sum": player.hand[1].value, "done": False},
+                ]
+
+                # Play both hands 
+                for i, hand in enumerate(splitHands):
+                    print(f"Playing hand {i+1}:\n")
+                    playHand(deck, handDir=hand, dealer=dealer)
+
+                # Play the dealer 
+                playDealer(deck, dealer)
 
 
+                for i, hand in enumerate(splitHands):
+                    print(f"Result for hand {i+1}")
+                    ## TODO: Do we need this first condition, we check it in playHand?
+                    if hand["sum"] > 21:
+                        print("Player busts, house wins.")
+                    
+                    elif dealer.sum > 21 or hand["sum"] > dealer.sum:
+                        print("Player wins.")
+                    
+                    elif hand["sum"] == dealer.sum:
+                        print("Push (tie - player gets his bet back).")
 
-                #TODO: Setup here is very hard, might want to rewrite and structure it differently.
-                ####
-                while hand1Sum <= 21:
-                    print("1. hand, what do you want to do?")
-                    choice = input(f"(H) Hit \n(S) Stand \n")
-
-                    match choice:
-
-                        case "H":
-                           newCard = deck.drawCard()
-                           hand1.append(newCard)
-                           hand1Sum += newCard.value
-
-                           print(f"You drew {newCard}, new 1.hand: {hand1}, {hand1Sum}")
-
-                           if (hand1Sum == 21):
-                               print(f"BLACKJACK! PLAYER hand1 wins, house loses.")
-                               hand1Done = True
-                               break
-
-                           elif (hand1Sum > 21):
-                               print(f"PLAYER hand1 busts, the house wins, player loses.")
-                               hand1Done = True 
-                               break
-
-                        case "S":
-                            print(f"You chose to stand with 1.hand, now decide for the 2.hand.")
-
-                while hand2Sum <= 21:
-                    print(f"2.hand, what do you want to do?")
-                    choice = input(f"(H) Hit \n(S) Stand \n")
-
-                    match choice:
-
-                        case "H":
-                           newCard = deck.drawCard()
-                           hand2.append(newCard)
-                           hand2Sum += newCard.value
-
-                           print(f"You drew {newCard}, new 2.hand: {hand2}, {hand2Sum}")  
-                           
-                           if (hand2Sum == 21):
-                               print(f"BLACKJACK! PLAYER 2.hand wins, house loses.")
-                               hand2Done = True
-                               break
-
-                           elif (hand2Sum > 21):
-                               print(f"PLAYER 2.hand busts, the house wins, player loses.")
-                               hand2Done = True
-                               break  
-
-                        case "S":
-                            print(f"You chose to stand with 2.hand.")
-
-                while dealer.sum <= 16 and (not hand1Done or not hand2Done):
-                    print(f"PLAYER: hand1: {hand1Sum}, hand2: {hand2Sum}")
-                    dealer.newCard(deck)
-                    print(f"DEALER: {dealer.hand}, {dealer.sum}")
-
-                if (dealer.sum == 21):
-                    print(f"The house wins, player lose both hands.")
-
-                elif (dealer.sum > 21):
-                    print(f"DEALER busts, player wins both hands.")
-
-                ### 
-
+                    else: 
+                        print("Dealer wins.")
+            
+                break 
+                    
+                
             case "Q":
                 print(f"You choose to quit.")
                 break

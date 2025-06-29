@@ -1,5 +1,6 @@
 import random
 
+#TODO: We want to fix this such that we have a carddeck with 52 card, else probabilities are messed up.
 possibleValues = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 possibleSuits = ["diamonds", "hearts", "spades", "clubs"]
 
