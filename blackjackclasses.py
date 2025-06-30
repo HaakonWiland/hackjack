@@ -1,13 +1,21 @@
 import random
 
-#TODO: We want to fix this such that we have a carddeck with 52 card, else probabilities are messed up.
-possibleValues = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+#TODO: How to handle Ace, should be 1 and 11. 
+# possibleValues = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+possibleValues = ["ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king"]
 possibleSuits = ["diamonds", "hearts", "spades", "clubs"]
 
 class Card:
-    def __init__(self, Value, Suit):
-        self.value = Value
+    def __init__(self, Value: str, Suit: str):
         self.suit = Suit
+        if Value in ("jack", "queen", "king"):
+            self.value = 10
+
+        elif Value == "ace":
+            self.value = 11
+        
+        else:
+            self.value = int(Value)
     
     def __str__(self):
         return f"{self.value} of {self.suit}"
@@ -27,6 +35,10 @@ class CardDeck:
             for s in possibleSuits:
                 card: tuple = Card(v, s)
                 self.cardDeck.append(card)
+        
+        # print(f"Carddeck length: {len(self.cardDeck)}")
+
+        assert len(self.cardDeck) == 52, "Deck needs to have 52 cards."
 
         self.shuffle()
 
@@ -61,24 +73,3 @@ class Player:
 
         
 
-
-        # self.hand.append(deck.drawCard)
-        # The dealer give cards in between 
-        # self.hand.append(deck.drawCard())
-
-        # self.sum = 0 
-        # for card in self.hand:
-        #     self.sum += card
-
-
-
-## Testing ##        
-# deck = CardDeck()
-# p = Player(deck)
-
-#
-# print(f"Deck: {deck.deck} \n\n Player card: {p.hand} \n\n Player sum: {p.sum}")
-#
-# for card in deck.deck:
-#     if p.hand == card:
-#         print(f"Error - duplicate cards")

@@ -47,6 +47,8 @@ def blackjackGame():
     player.newCard(deck)
     print(f"PLAYER: {player.hand}, {player.sum}")
 
+    # handDir = {"cards": player.hand, "sum": player.sum, "done": False}
+
     # TODO: Fix gameloop by using the playHand and playDealer function.
     while player.sum <= 21:
         choice = input(f"(H) Hit \n(S) Stand \n(D) Double Down \n(SP) Split Pairs \n(Q) Quit\n")
