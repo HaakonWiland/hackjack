@@ -29,7 +29,6 @@ def playDealer(deck: CardDeck, dealer: Player):
         dealer.newCard(deck)
         print(f"DEALERS new hand: {dealer.hand}, {dealer.sum}")
 
-#TODO: Natural blackjack 3:2 odds case, how to handle this?  
 ## Main game loop ##
 def blackjackGame():
      
@@ -52,11 +51,16 @@ def blackjackGame():
     # TODO: Fix gameloop by using the playHand and playDealer function.
     while player.sum <= 21:
 
-        if player.blackjack == True:
-            print(f"Natural blackjack! You are reward based on 3:2 odds, unless dealer also has blackjack.")
+        if player.blackjack == True and dealer.sum != 21:
+            print(f"Natural blackjack! You are rewarded based on 3:2 odds.")
             break 
 
-        choice = input(f"(H) Hit \n(S) Stand \n(D) Double Down \n(SP) Split Pairs \n(Q) Quit\n")
+        elif player.blackjack == True and dealer.sum == 21:
+            print(f"Both dealer and player got natural blackjack, its a push (tie).")
+            break
+
+        choice = input(f"(H) Hit \n(S) Stand \n(D) Double Down \n(SP) Split Pairs \n(Q) Quit\n").upper()
+
         match choice:
             case "H":
                 print("You choose to hit!")
@@ -171,7 +175,8 @@ def blackjackGame():
                 print(f"You choose to quit.")
                 break
 
-
+            case _:
+                print(f"Invalid input.")
 
 
 blackjackGame()
