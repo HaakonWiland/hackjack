@@ -4,22 +4,34 @@ class gameState:
     def __init__(self, PlayerTotal: int, DealerTotal):
         self.playerTotal = PlayerTotal
         self.dealerTotal = DealerTotal
+        self.state = (self.playerTotal, self.dealerTotal)
         
     
     def __str__(self):
         return f"Player: {self.playerTotal} \nDealer: {self.dealerTotal} \n"
 
     def get(self):
-        return (self.playerTotal, self.dealerTotal) 
+        return self.state
+
+    def getPlayer(self):
+        return self.state[0] 
 
     def bestMove(self):
-        # Look up in the best move tables, and retun H,S,SP, or DD?
-        pass
+        choice = ""
+
+        if self.state[0] < 8:
+            choice = "H"
+        elif self.state[0] > 17:
+            choice = "S"
+        else: 
+            choice = hardTotals[self.state]
+        
+        return choice
     
 
 state = gameState(8,2)
 
-print(state.get() == (8,3))
+# print(state.get() == (8,3))
 # TODO: Correct to just use 1 for Ace here? 
 
 hardTotals = {(17,2) : "S", (17,3) : "S", (17,4): "S", (17,5): "S", (17,6): "S", (17,7): "S", (17,8): "S", (17,9): "S", (17,10): "S", (17,1): "S",
@@ -34,4 +46,7 @@ hardTotals = {(17,2) : "S", (17,3) : "S", (17,4): "S", (17,5): "S", (17,6): "S",
               (8,2) : "H", (8,3) : "H", (8,4) : "H", (8,5) : "H", (8,6) : "H", (8,7) : "H", (8,8) : "H", (8,9) : "H", (8,10) : "H", (8,1) : "H"                    
     }
 
-print(f"{hardTotals[(8,2)]}")
+
+print(state.getPlayer())
+
+print(f"{hardTotals[(11,3)]}")

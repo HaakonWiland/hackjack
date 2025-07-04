@@ -1,4 +1,5 @@
-from blackjackclasses import Card, CardDeck, Player
+from blackjackclasses import CardDeck, Player
+from basicStrategy import gameState 
 
 def playHand(deck : CardDeck, handDir, dealer: Player): 
     while not handDir["done"] and handDir["sum"] <= 21:
@@ -59,13 +60,19 @@ def blackjackGame():
             print(f"Both dealer and player got natural blackjack, its a push (tie).")
             break
 
+        ### Finding best move: 
+        state = gameState(player.sum, dealerVisible)
+        bestMove = state.bestMove()
+        print(f"Best more: {bestMove}\n")
+        ### 
+
         choice = input(f"(H) Hit \n(S) Stand \n(D) Double Down \n(SP) Split Pairs \n(Q) Quit\n").upper()
 
         match choice:
             case "H":
                 print("You choose to hit!")
                 player.newCard(deck)
-                print(f"DEALER: {dealer.hand}, {dealer.sum} ({dealerVisible})")
+                print(f"DEALER: {dealer.hand}, {dealerVisible}")
                 print(f"PLAYER: {player.hand}, {player.sum}")
 
                 if (player.sum == 21):
