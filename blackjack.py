@@ -34,7 +34,7 @@ def playDealer(deck: CardDeck, dealer: Player):
 def blackjackGame():
      
     deck = CardDeck() 
-    print(deck.getDeck())
+    # print(deck.getDeck())
 
     dealer = Player()
     dealer.newCard(deck)
@@ -61,7 +61,7 @@ def blackjackGame():
             break
 
         ### FINDING BEST MOVE: 
-        state = gameState(player.sum, dealerVisible, player.hasAce)
+        state = gameState(player.sum, dealerVisible, player.hasAce, player.hand)
         bestMove = state.bestMove()
         print(f"Best more: {bestMove}\n")
         ### 

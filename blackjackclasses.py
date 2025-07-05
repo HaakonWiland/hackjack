@@ -78,7 +78,7 @@ class Player:
         if card.ace == True and (self.sum + card.value) == 21:
             self.hasAce = True
             self.blackjack = True
-
+        
         elif card.ace == True and (self.sum + card.value) > 21:
             self.hasAce = True
             self.sum += 1 
