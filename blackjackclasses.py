@@ -68,6 +68,7 @@ class Player:
         self.hand: list = []
         self.sum = 0
         self.blackjack = False
+        self.hasAce  = False
 
     def newCard(self, deck):
         card = deck.drawCard()
@@ -75,9 +76,11 @@ class Player:
 
         # For the natural blackjack. 
         if card.ace == True and (self.sum + card.value) == 21:
+            self.hasAce = True
             self.blackjack = True
 
         elif card.ace == True and (self.sum + card.value) > 21:
+            self.hasAce = True
             self.sum += 1 
         else:
             self.sum += card.value

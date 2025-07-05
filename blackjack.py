@@ -40,7 +40,7 @@ def blackjackGame():
     dealer.newCard(deck)
     dealerVisible = dealer.sum
     dealer.newCard(deck)
-    print(f"DEALER: {dealer.hand}, {dealer.sum} ({dealerVisible})")
+    print(f"DEALER: {dealer.hand}, {dealerVisible}")
 
     player = Player()
     player.newCard(deck)
@@ -60,8 +60,8 @@ def blackjackGame():
             print(f"Both dealer and player got natural blackjack, its a push (tie).")
             break
 
-        ### Finding best move: 
-        state = gameState(player.sum, dealerVisible)
+        ### FINDING BEST MOVE: 
+        state = gameState(player.sum, dealerVisible, player.hasAce)
         bestMove = state.bestMove()
         print(f"Best more: {bestMove}\n")
         ### 
