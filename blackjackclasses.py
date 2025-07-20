@@ -74,16 +74,35 @@ class Player:
         card = deck.drawCard()
         self.hand.append(card)
 
+        if card.ace == True:
+            self.hasAce = True
+
         # For the natural blackjack. 
         if card.ace == True and (self.sum + card.value) == 21:
-            self.hasAce = True
             self.blackjack = True
         
         elif card.ace == True and (self.sum + card.value) > 21:
-            self.hasAce = True
             self.sum += 1 
+        
         else:
             self.sum += card.value
 
+
+    # For debugging
+    def appendCard(self, card: Card):
+        self.hand.append(card)
+
+        if card.ace == True:
+            self.hasAce = True
+
+        # For the natural blackjack. 
+        if card.ace == True and (self.sum + card.value) == 21:
+            self.blackjack = True
+        
+        elif card.ace == True and (self.sum + card.value) > 21:
+            self.sum += 1 
+        
+        else:
+            self.sum += card.value
         
 

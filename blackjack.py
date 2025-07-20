@@ -1,4 +1,4 @@
-from blackjackclasses import CardDeck, Player
+from blackjackclasses import CardDeck, Player, Card
 from basicStrategy import gameState 
 
 def playHand(deck : CardDeck, handDir, dealer: Player): 
@@ -40,16 +40,24 @@ def blackjackGame():
     dealer.newCard(deck)
     dealerVisible = dealer.sum
     dealer.newCard(deck)
-    print(f"DEALER: {dealer.hand}, {dealerVisible}")
+    # dealerTestCard = Card("6", "clubs")
+    # dealer.appendCard(dealerTestCard) 
+    # dealerVisible = dealer.sum
+
+    print(f"DEALER: [{dealer.hand[0]}], {dealerVisible}")
 
     player = Player()
     player.newCard(deck)
     player.newCard(deck)
+    # playerTestCard1 = Card("ace", "clubs")
+    # playerTestCard2 = Card("6", "clubs")
+    # player.appendCard(playerTestCard1)
+    # player.appendCard(playerTestCard2)
+
+    # player.sum = (playerTestCard1.value + playerTestCard2.value)
+
     print(f"PLAYER: {player.hand}, {player.sum}")
 
-    # handDir = {"cards": player.hand, "sum": player.sum, "done": False}
-
-    # TODO: Fix gameloop by using the playHand and playDealer function.
     while player.sum <= 21:
 
         if player.blackjack == True and dealer.sum != 21:
@@ -111,11 +119,13 @@ def blackjackGame():
                 print("You choose to Double Down!\n")
                 print(f"You inital bet has be doubled.")
 
+                # When doubling down, we need to draw one more card. 
                 player.newCard(deck)
                 print(f"PLAYER: {player.hand}, {player.sum}")
 
-                #TODO: After double and newcard, its the same flow as (S). 
-                #Fix such that we dont have to repeat code.
+                if player.sum > 21:
+                    print(f"Player busts, Dealer wins.")
+                    break
 
                 print(f"Dealer reveal hidden card: {dealer.hand}, {dealer.sum}")
                 

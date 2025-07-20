@@ -1,7 +1,7 @@
 # This works, but is there a better way?
 
 class gameState:
-    def __init__(self, PlayerTotal: int, DealerTotal: int, PlayerAce: int, PlayerHand : list):
+    def __init__(self, PlayerTotal: int, DealerTotal: int, PlayerAce: bool, PlayerHand : list):
         self.playerTotal = PlayerTotal
         self.dealerTotal = DealerTotal
         self.state = (self.playerTotal, self.dealerTotal)
@@ -26,13 +26,15 @@ class gameState:
             choice = pairSplitting[(self.playerHand[0].value, self.dealerTotal)] 
 
         # Soft totals:
-        # TODO: Get error when the player gets an ace as the third, fourth,.. card. 
-        # Then it goes into soft totals, but should go into hard totals.
-        # FIX: Add condition that either the first or secound card has to be the ace?  
-        # ERROR: Now fails to go into soft total block on Ace,6 -> Should be D, but gives S?
-        elif self.playerAce == True and (self.playerHand[0].value == 11 or self.playerHand[1].value == 11):
-            choice = softTotals[self.state]
-        
+        elif self.playerAce == True:
+            # Check if our sum used ace as 11, in that case, we need to modify the state to fit softTotals
+            if self.playerTotal > 10:
+                self.modifiedState = (self.playerTotal - 10, self.dealerTotal)
+                choice = softTotals[self.modifiedState]
+            
+            else:
+                choice = softTotals[self.state]
+            
         # Hard totals:
         elif self.state[0] < 8:
             choice = "H"
@@ -43,10 +45,6 @@ class gameState:
         
         return choice
     
-
-# state = gameState(8,2, False)
-
-# print(state.get() == (8,3))
 # TODO: Correct to just use 1 for Ace here -> Got some edge case errors, when the dealer had ace as visible card 
 # fix: Just add entries for both 1 and 11, with the same choices?
 
@@ -77,7 +75,7 @@ softTotals = {(10,2) : "S", (10,3) : "S", (10,4) : "S", (10,5) : "S", (10,6) : "
 
 # NOTE: Since all entries in this matrix is a pair, we write the players hand as just one card, i.e. if play has A,A we just write (1, dealersum) 
 # Currently not take into account the DAS case. 
-# TODO: Lookup 3 pair, and 2 pair cases, when we dont split, what do we do? -> Always hit?
+# TODO: Lookup 3 pair, and 2 pair cases, when we dont split, what do we do? -> Always hit, anything else would we wired.
 
 pairSplitting = {(11,2) : "SP", (11,3) : "SP", (11,4) : "SP", (11,5) : "SP", (11,6) : "SP", (11,7) : "SP", (11,8) : "SP", (11,9) : "SP", (11,10) : "SP", (11,11) : "SP", 
                  (1,2) : "SP", (1,3) : "SP", (1,4) : "SP", (1,5) : "SP", (1,6) : "SP", (1,7) : "SP", (1,8) : "SP", (1,9) : "SP", (1,10) :  "SP", (1,1) : "SP", (1,11) : "SP",
@@ -91,9 +89,3 @@ pairSplitting = {(11,2) : "SP", (11,3) : "SP", (11,4) : "SP", (11,5) : "SP", (11
                  (3,2) : "H", (3,3) : "H", (3,4) : "SP",  (3,5) : "SP", (3,6) : "SP", (3,7) : "SP", (3,8) : "H", (3,9) : "H", (3,10) : "H", (3,1) : "H", (3,11) : "H",
                  (2,2) : "H", (2,3) : "H", (2,4) : "SP", (2,5) : "SP", (2,6) : "SP", (2,7) : "SP", (2,8) : "H", (2,9) : "H", (2,10) : "H", (2,1) : "H", (2,11) : "H"                
 } 
-
-
-
-
-# print(state.getPlayer())
-# # print(f"{hardTotals[(11,3)]}")
