@@ -70,6 +70,25 @@ class Player:
         self.blackjack = False
         self.hasAce  = False
 
+    # TODO: Fix: Get error when we have sat Ace to have value 1 
+    # but we get a new, non-ace card that makes sum > 21
+    # We end up busting, even tho the ace should adapt. 
+    def computeSum(self):
+        newSum: int = 0
+
+        if self.hasAce == False:
+            for card in self.hand:
+                newSum += card.value
+        
+        elif self.hasAce == True:
+            for card in self.hand:
+                newSum += card.value
+
+            if newSum > 21:
+                newSum -= 10 
+
+        self.sum = newSum
+
     def newCard(self, deck):
         card = deck.drawCard()
         self.hand.append(card)
@@ -79,14 +98,22 @@ class Player:
 
         # For the natural blackjack. 
         if card.ace == True and (self.sum + card.value) == 21:
+            self.sum += card.value
             self.blackjack = True
+           
         
-        elif card.ace == True and (self.sum + card.value) > 21:
-            self.sum += 1 
+        # If we were to bust, only add 1 to sum. 
+        # elif card.ace == True and (self.sum + card.value) > 21:
+        #     self.sum += 1 
+  
+
+        # elif card.ace == True and (self.sum + card.value) < 21:
+        #     self.sum += 11 
         
         else:
-            self.sum += card.value
-
+            self.computeSum()
+            # self.sum += card.value
+    
 
     # For debugging
     def appendCard(self, card: Card):
@@ -97,12 +124,9 @@ class Player:
 
         # For the natural blackjack. 
         if card.ace == True and (self.sum + card.value) == 21:
+            self.sum += card.value
             self.blackjack = True
         
-        elif card.ace == True and (self.sum + card.value) > 21:
-            self.sum += 1 
-        
         else:
-            self.sum += card.value
-        
+            self.computeSum()
 

@@ -37,24 +37,26 @@ def blackjackGame():
     # print(deck.getDeck())
 
     dealer = Player()
-    dealer.newCard(deck)
-    dealerVisible = dealer.sum
-    dealer.newCard(deck)
-    # dealerTestCard = Card("6", "clubs")
-    # dealer.appendCard(dealerTestCard) 
+    # dealer.newCard(deck)
     # dealerVisible = dealer.sum
+    # dealer.newCard(deck)
+    dealerTestCard2 = Card("jack", "clubs")
+    dealerTestCard1 = Card("9", "clubs")
+    dealer.appendCard(dealerTestCard1)
+    dealer.appendCard(dealerTestCard2) 
+    dealerVisible = dealer.sum
 
     print(f"DEALER: [{dealer.hand[0]}], {dealerVisible}")
 
     player = Player()
-    player.newCard(deck)
-    player.newCard(deck)
-    # playerTestCard1 = Card("ace", "clubs")
-    # playerTestCard2 = Card("6", "clubs")
-    # player.appendCard(playerTestCard1)
-    # player.appendCard(playerTestCard2)
+    # player.newCard(deck)
+    # player.newCard(deck)
+    playerTestCard1 = Card("ace", "clubs")
+    playerTestCard2 = Card("6", "clubs")
+    player.appendCard(playerTestCard1)
+    player.appendCard(playerTestCard2)
 
-    # player.sum = (playerTestCard1.value + playerTestCard2.value)
+    player.sum = (playerTestCard1.value + playerTestCard2.value)
 
     print(f"PLAYER: {player.hand}, {player.sum}")
 
@@ -80,7 +82,7 @@ def blackjackGame():
             case "H":
                 print("You choose to hit!")
                 player.newCard(deck)
-                print(f"DEALER: {dealer.hand}, {dealerVisible}")
+                print(f"DEALER: {dealer.hand[0]}, {dealerVisible}")
                 print(f"PLAYER: {player.hand}, {player.sum}")
 
                 if (player.sum == 21):
@@ -95,6 +97,7 @@ def blackjackGame():
                 print(f"Dealer reveal hidden card: {dealer.hand}, {dealer.sum}")
                 
                 while dealer.sum <= 16:
+                    print(f"Dealers hand it less than 17, they draw a new card..")
                     dealer.newCard(deck)
                     print(f"DEALER: {dealer.hand}, {dealer.sum}")
 
@@ -117,7 +120,7 @@ def blackjackGame():
 
             case "D":
                 print("You choose to Double Down!\n")
-                print(f"You inital bet has be doubled.")
+                print(f"Your inital bet has be doubled.")
 
                 # When doubling down, we need to draw one more card. 
                 player.newCard(deck)

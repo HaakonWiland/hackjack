@@ -177,3 +177,6 @@ cython_debug/
 .vs
 .vs/*
 .vscode*
+
+# Self defined 
+plan.md

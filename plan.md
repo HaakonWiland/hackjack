@@ -24,3 +24,9 @@ How to structure the basic strategy?
 - Basic strategy displays 280 explisit choices, many states are "the same", ex. 5+3=8 and 2+6=8, the hard total is 8 in both cases. 
 - Can sort in 3 categories: Hard totals(no Ace or pair), soft totals (Got an ace), and Pairs. Make nested dict or table for each of them. 
 - Then take all cases which are "hard totals", and sum <= 8, as hit? 
+
+
+## Cases in blackjack which we need to know:
+#### Blackjack can only occur in the first two cards.
+A, K == 21, blackjack
+K, 6, A == 17 != blackjack
