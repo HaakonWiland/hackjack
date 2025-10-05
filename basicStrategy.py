@@ -25,8 +25,22 @@ class gameState:
         if self.playerHand[0].value == self.playerHand[1].value:
             choice = pairSplitting[(self.playerHand[0].value, self.dealerTotal)] 
 
-        # Soft totals:
-        elif self.playerAce == True:
+        # TODO: Handle multiple cards and ace:
+        elif len(self.playerHand) > 2 and self.playerAce == True:
+            if self.playerTotal > 21:
+
+                pass 
+
+            elif self.playerTotal < 21:
+                pass 
+
+            elif self.playerTotal == 21:
+                print("Player has sum 21, the game should already have ended?")
+                
+    
+
+        # soft totals - with 2 cards.
+        elif len(self.playerHand) == 2 and self.playerAce == True:
             # Check if our sum used ace as 11, in that case, we need to modify the state to fit softTotals
             if self.playerTotal > 10:
                 self.modifiedState = (self.playerTotal - 10, self.dealerTotal)
@@ -34,7 +48,7 @@ class gameState:
             
             else:
                 choice = softTotals[self.state]
-            
+        
         # Hard totals:
         elif self.state[0] < 8:
             choice = "H"
@@ -62,7 +76,7 @@ hardTotals = {(17,2) : "S", (17,3) : "S", (17,4): "S", (17,5): "S", (17,6): "S",
 
 #TODO: How to handle these, have to read the hand of the player - how should it be represented? 
 # Can do .hasAce() == True, then just represent with the (Ace + other_card, dealers_sum)
-# Example: (10,2) means the player has Ace and a 9.  
+# Example: (10,2) means the player has Ace and a 9 -> Flaw: Here we have assumed that the player has two cards. 
 softTotals = {(10,2) : "S", (10,3) : "S", (10,4) : "S", (10,5) : "S", (10,6) : "S", (10,7) : "S", (10,8) : "S", (10,9) : "S", (10,10) : "S", (10,1) : "S", (10,11) : "S",
                (9,2) : "S", (9,3) : "S", (9,4) : "S", (9,5) : "S", (9,6) : "D", (9,7) : "S", (9,8) : "S", (9,9) : "S", (9,10) : "S", (9,1) : "S", (9,11) : "S",
                (8,2) : "D", (8,3) : "D", (8,4) : "D", (8,5) : "D", (8,6) : "D", (8,7) : "S", (8,8) : "S", (8,9) : "H", (8,10) : "H", (8,1) : "H", (8,11) : "H",

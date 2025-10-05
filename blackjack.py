@@ -40,23 +40,30 @@ def blackjackGame():
     # dealer.newCard(deck)
     # dealerVisible = dealer.sum
     # dealer.newCard(deck)
-    dealerTestCard2 = Card("jack", "clubs")
-    dealerTestCard1 = Card("9", "clubs")
+    # dealerVisible = dealer.sum
+
+    #### TESTING 
+    dealerTestCard1 = Card("jack", "clubs")
+    dealerTestCard2 = Card("9", "clubs")
     dealer.appendCard(dealerTestCard1)
     dealer.appendCard(dealerTestCard2) 
-    dealerVisible = dealer.sum
+    dealerVisible = dealerTestCard1.value
+    ####
 
     print(f"DEALER: [{dealer.hand[0]}], {dealerVisible}")
 
     player = Player()
     # player.newCard(deck)
     # player.newCard(deck)
+
+    #### TESTING 
     playerTestCard1 = Card("ace", "clubs")
     playerTestCard2 = Card("6", "clubs")
+    playerTestCard3 = Card("10", "clubs")
     player.appendCard(playerTestCard1)
     player.appendCard(playerTestCard2)
-
-    player.sum = (playerTestCard1.value + playerTestCard2.value)
+    player.appendCard(playerTestCard3)
+    ####  
 
     print(f"PLAYER: {player.hand}, {player.sum}")
 

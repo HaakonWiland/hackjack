@@ -30,3 +30,16 @@ How to structure the basic strategy?
 #### Blackjack can only occur in the first two cards.
 A, K == 21, blackjack
 K, 6, A == 17 != blackjack
+
+#### Maths
+- Claim: House advantage is 56% ? -> With what rules? 
+
+
+#### Competitors:
+- Blackjack apprentorship: Cost money, has distracting website, 
+- Blackjack traning: Wierd website as well, 
+
+
+#### Our market breaking features:
+- Hotkeys to play 
+- Basic and based website, no chat, no ugly tailwind toggle buttons with round edges.  
