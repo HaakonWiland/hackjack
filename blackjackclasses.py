@@ -69,10 +69,8 @@ class Player:
         self.sum = 0
         self.blackjack = False
         self.hasAce  = False
+        self.softTotalPossible = True 
 
-    # TODO: Fix: Get error when we have sat Ace to have value 1 
-    # but we get a new, non-ace card that makes sum > 21
-    # We end up busting, even tho the ace should adapt. 
     def computeSum(self):
         newSum: int = 0
 
@@ -86,6 +84,7 @@ class Player:
 
             if newSum > 21:
                 newSum -= 10 
+                self.softTotalPossible = False 
 
         self.sum = newSum
 
@@ -100,19 +99,9 @@ class Player:
         if card.ace == True and (self.sum + card.value) == 21:
             self.sum += card.value
             self.blackjack = True
-           
-        
-        # If we were to bust, only add 1 to sum. 
-        # elif card.ace == True and (self.sum + card.value) > 21:
-        #     self.sum += 1 
-  
-
-        # elif card.ace == True and (self.sum + card.value) < 21:
-        #     self.sum += 11 
         
         else:
             self.computeSum()
-            # self.sum += card.value
     
 
     # For debugging

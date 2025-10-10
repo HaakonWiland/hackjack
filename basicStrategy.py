@@ -1,14 +1,14 @@
 # This works, but is there a better way?
 
 class gameState:
-    def __init__(self, PlayerTotal: int, DealerTotal: int, PlayerAce: bool, PlayerHand : list):
+    def __init__(self, PlayerTotal: int, DealerTotal: int, PlayerAce: bool, PlayerHand : list, SoftTotalPossible: bool):
         self.playerTotal = PlayerTotal
         self.dealerTotal = DealerTotal
         self.state = (self.playerTotal, self.dealerTotal)
         self.playerAce = PlayerAce
         self.playerHand = PlayerHand
+        self.softTotalPossible = SoftTotalPossible 
         
-    
     def __str__(self):
         return f"Player: {self.playerTotal} \nDealer: {self.dealerTotal} \n"
 
@@ -25,29 +25,10 @@ class gameState:
         if self.playerHand[0].value == self.playerHand[1].value:
             choice = pairSplitting[(self.playerHand[0].value, self.dealerTotal)] 
 
-        # TODO: Handle multiple cards and ace:
-        elif len(self.playerHand) > 2 and self.playerAce == True:
-            if self.playerTotal > 21:
-
-                pass 
-
-            elif self.playerTotal < 21:
-                pass 
-
-            elif self.playerTotal == 21:
-                print("Player has sum 21, the game should already have ended?")
-                
-    
-
-        # soft totals - with 2 cards.
-        elif len(self.playerHand) == 2 and self.playerAce == True:
-            # Check if our sum used ace as 11, in that case, we need to modify the state to fit softTotals
-            if self.playerTotal > 10:
-                self.modifiedState = (self.playerTotal - 10, self.dealerTotal)
-                choice = softTotals[self.modifiedState]
-            
-            else:
-                choice = softTotals[self.state]
+        # Soft total: 
+        if self.playerAce == True and self.softTotalPossible == True:
+            self.modifiedState = (self.playerTotal - 10, self.dealerTotal)
+            choice = softTotals[self.modifiedState] 
         
         # Hard totals:
         elif self.state[0] < 8:
@@ -76,7 +57,7 @@ hardTotals = {(17,2) : "S", (17,3) : "S", (17,4): "S", (17,5): "S", (17,6): "S",
 
 #TODO: How to handle these, have to read the hand of the player - how should it be represented? 
 # Can do .hasAce() == True, then just represent with the (Ace + other_card, dealers_sum)
-# Example: (10,2) means the player has Ace and a 9 -> Flaw: Here we have assumed that the player has two cards. 
+# Example: (10,2) means the player has Ace and a 9 -> Flaw: Here we have assumed that the player has two cards, but does not really matter if sum is the same. 
 softTotals = {(10,2) : "S", (10,3) : "S", (10,4) : "S", (10,5) : "S", (10,6) : "S", (10,7) : "S", (10,8) : "S", (10,9) : "S", (10,10) : "S", (10,1) : "S", (10,11) : "S",
                (9,2) : "S", (9,3) : "S", (9,4) : "S", (9,5) : "S", (9,6) : "D", (9,7) : "S", (9,8) : "S", (9,9) : "S", (9,10) : "S", (9,1) : "S", (9,11) : "S",
                (8,2) : "D", (8,3) : "D", (8,4) : "D", (8,5) : "D", (8,6) : "D", (8,7) : "S", (8,8) : "S", (8,9) : "H", (8,10) : "H", (8,1) : "H", (8,11) : "H",
@@ -89,7 +70,7 @@ softTotals = {(10,2) : "S", (10,3) : "S", (10,4) : "S", (10,5) : "S", (10,6) : "
 
 # NOTE: Since all entries in this matrix is a pair, we write the players hand as just one card, i.e. if play has A,A we just write (1, dealersum) 
 # Currently not take into account the DAS case. 
-# TODO: Lookup 3 pair, and 2 pair cases, when we dont split, what do we do? -> Always hit, anything else would we wired.
+# TODO: Lookup 3 pair, and 2 pair cases, when we dont split, what do we do? -> Just play normally? 
 
 pairSplitting = {(11,2) : "SP", (11,3) : "SP", (11,4) : "SP", (11,5) : "SP", (11,6) : "SP", (11,7) : "SP", (11,8) : "SP", (11,9) : "SP", (11,10) : "SP", (11,11) : "SP", 
                  (1,2) : "SP", (1,3) : "SP", (1,4) : "SP", (1,5) : "SP", (1,6) : "SP", (1,7) : "SP", (1,8) : "SP", (1,9) : "SP", (1,10) :  "SP", (1,1) : "SP", (1,11) : "SP",

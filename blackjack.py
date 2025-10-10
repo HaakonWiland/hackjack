@@ -34,35 +34,32 @@ def playDealer(deck: CardDeck, dealer: Player):
 def blackjackGame():
      
     deck = CardDeck() 
-    # print(deck.getDeck())
-
     dealer = Player()
-    # dealer.newCard(deck)
-    # dealerVisible = dealer.sum
-    # dealer.newCard(deck)
-    # dealerVisible = dealer.sum
+    player = Player()
+
+    dealer.newCard(deck)
+    dealerVisible = dealer.sum
+    dealer.newCard(deck)
+
 
     #### TESTING 
-    dealerTestCard1 = Card("jack", "clubs")
-    dealerTestCard2 = Card("9", "clubs")
-    dealer.appendCard(dealerTestCard1)
-    dealer.appendCard(dealerTestCard2) 
-    dealerVisible = dealerTestCard1.value
+    # dealerTestCard1 = Card("7", "clubs")
+    # dealerTestCard2 = Card("10", "clubs")
+    # dealer.appendCard(dealerTestCard1)
+    # dealer.appendCard(dealerTestCard2) 
+    # dealerVisible = dealerTestCard1.value
     ####
 
     print(f"DEALER: [{dealer.hand[0]}], {dealerVisible}")
 
-    player = Player()
-    # player.newCard(deck)
-    # player.newCard(deck)
+    player.newCard(deck)
+    player.newCard(deck)
 
     #### TESTING 
-    playerTestCard1 = Card("ace", "clubs")
-    playerTestCard2 = Card("6", "clubs")
-    playerTestCard3 = Card("10", "clubs")
-    player.appendCard(playerTestCard1)
-    player.appendCard(playerTestCard2)
-    player.appendCard(playerTestCard3)
+    # playerTestCard1 = Card("8", "clubs")
+    # playerTestCard2 = Card("5", "clubs")
+    # player.appendCard(playerTestCard1)
+    # player.appendCard(playerTestCard2)
     ####  
 
     print(f"PLAYER: {player.hand}, {player.sum}")
@@ -78,7 +75,7 @@ def blackjackGame():
             break
 
         ### FINDING BEST MOVE: 
-        state = gameState(player.sum, dealerVisible, player.hasAce, player.hand)
+        state = gameState(player.sum, dealerVisible, player.hasAce, player.hand, player.softTotalPossible)
         bestMove = state.bestMove()
         print(f"Best more: {bestMove}\n")
         ### 
