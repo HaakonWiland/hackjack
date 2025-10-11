@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Flask App{% endblock %}</title>
+
+    <!-- Optional CSS file -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <header>
+        <h1>{% block header %}HACKJACK{% endblock %}</h1>
+    </header>
+
+    <main>
+        {% block content %}
+        <!-- Default content -->
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; {{ 2025 }} - Built with Flask</p>
+    </footer>
+</body>
+</html>

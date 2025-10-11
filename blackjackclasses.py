@@ -27,23 +27,44 @@ class Card:
     def __repr__(self):
         return self.__str__()
 
+
+    #TODO: Serialize and dezerialize. 
+    def serialize(self):
+        return {"value": self.value, "suit": self.suit}
+    
+    @classmethod
+    def deserialize(cls, card_data: dict):
+        return cls(card_data["value"], card_data["suit"])
+
 # TODO: We want value and suit to only have "value" and "suit" as possible values
 
 
 class CardDeck:
-    def __init__(self):
-        self.cardDeck: list[tuple] = []
+    def __init__(self, CardDeck=None):
+        if CardDeck == None: 
+            self.cardDeck: list[tuple] = []
 
-        for v in possibleValues:
-            for s in possibleSuits:
-                card: tuple = Card(v, s)
-                self.cardDeck.append(card)
+            for v in possibleValues:
+                for s in possibleSuits:
+                    card: tuple = Card(v, s)
+                    self.cardDeck.append(card)
+            
+            # print(f"Carddeck length: {len(self.cardDeck)}")
+
+            assert len(self.cardDeck) == 52, "Deck needs to have 52 cards."
+
+            self.shuffle()
         
-        # print(f"Carddeck length: {len(self.cardDeck)}")
+        else:
+            self.cardDeck = CardDeck
 
-        assert len(self.cardDeck) == 52, "Deck needs to have 52 cards."
 
-        self.shuffle()
+    def serialize(self):
+        return {"deck": [card.serialize() for card in self.cardDeck]}
+
+    @classmethod
+    def deserialize(cls, cardDeck_data):
+        return cls(cardDeck_data["deck"])
 
     def getDeck(self):
         return self.cardDeck
@@ -64,12 +85,33 @@ class CardDeck:
 
 
 class Player:
-    def __init__(self):
-        self.hand: list = []
-        self.sum = 0
-        self.blackjack = False
-        self.hasAce  = False
-        self.softTotalPossible = True 
+    def __init__(self, hand=None, sum_=0, blackjack=False, hasAce=False, softTotalPossible=True):
+        self.hand = hand if hand is not None else []
+        self.sum = sum_
+        self.blackjack = blackjack
+        self.hasAce = hasAce
+        self.softTotalPossible = softTotalPossible
+    
+    def serialize(self):
+        return {
+            "hand": [card.serialize() for card in self.hand],
+            "sum": self.sum,
+            "blackjack": self.blackjack,
+            "hasAce": self.hasAce,
+            "softTotalPossible": self.softTotalPossible
+        }
+    
+    @classmethod
+    def deserialize(cls, player_data):
+        hand = [card.deserialize(c) for c in player_data["hand"]]
+        return cls(
+            hand=hand,
+            sum_=player_data["sum"],
+            blackjack=player_data["blackjack"],
+            hasAce=player_data["hasAce"],
+            softTotalPossible=player_data["softTotalPossible"]     
+        )
+    
 
     def computeSum(self):
         newSum: int = 0
