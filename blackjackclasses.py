@@ -103,7 +103,7 @@ class Player:
     
     @classmethod
     def deserialize(cls, player_data):
-        hand = [card.deserialize(c) for c in player_data["hand"]]
+        hand = [Card.deserialize(c) for c in player_data["hand"]]
         return cls(
             hand=hand,
             sum_=player_data["sum"],

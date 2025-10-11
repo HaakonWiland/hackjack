@@ -1,11 +1,30 @@
 {% extends "base.html" %}
 
-{% block title %}Home{% endblock %}
+{% block title %}Hackjack{% endblock %}
 
 {% block content %}
-    {% if person %}
-        <h2>Hello, {{ person }}!</h2>
+    {% if dealer %}
+        <h2>DEALER</h2>
+        <p>Visible Card: {{ dealer.hand[0] if dealer.hand else "No cards yet" }}</p>
+        <p>Dealer Sum: {{ dealer.hand[0].value }}</p>
     {% else %}
-        <h2>Hello, World!</h2>
+        <h2>Error: Cannot access dealer</h2>
     {% endif %}
+
+    {% if player %}
+        <h2>PLAYER</h2>
+        <p>Cards: {{ player.hand if player.hand else "No cards yet" }}</p>
+        <p>Player Sum: {{ player.sum }}</p>
+    {% else %}
+        <h2>Error: Cannot access player</h2>
+
+    {% endif %}
+
+    <form method="POST">
+        <button type="submit" name="action" value="hit">Hit</button>
+        <button type="submit" name="action" value="stand">Stand</button>
+        <button type="submit" name="action" value="stand">Double</button>
+        <button type="submit" name="action" value="stand">Split</button>
+    </form>
+
 {% endblock %}

@@ -27,11 +27,11 @@ def index(name=None):
         init_game()
 
     deck = CardDeck.deserialize(session["deck"])
-    # dealer = Player.deserialize(session["dealer"])
-    # player = Player.deserialize(session["player"])
+    dealer = Player.deserialize(session["dealer"])
+    player = Player.deserialize(session["player"])
 
-
-
-
-
-    return render_template("index.html", person="haakon")
+    return render_template(
+        "index.html",
+        player=player,
+        dealer=dealer
+    )
