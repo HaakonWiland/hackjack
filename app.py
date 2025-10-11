@@ -30,11 +30,16 @@ def init_game():
     player.newCard(deck)
     player.newCard(deck)
 
+    #TODO: Create state object and save it into the session. 
+
     # Dicts represetning the object data 
-    session["deck"] = deck.serialize()
-    session["dealer"] = dealer.serialize()
-    session["player"] = player.serialize()
     save_session() 
+
+
+    # session["deck"] = deck.serialize()
+    # session["dealer"] = dealer.serialize()
+    # session["player"] = player.serialize()
+
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -42,11 +47,11 @@ def index(name=None):
     if "deck" not in session:
         init_game()
 
-    # deck, dealer, player = load_session()
+    deck, dealer, player = load_session()
 
-    deck = CardDeck.deserialize(session["deck"])
-    dealer = Player.deserialize(session["dealer"])
-    player = Player.deserialize(session["player"])
+    # deck = CardDeck.deserialize(session["deck"])
+    # dealer = Player.deserialize(session["dealer"])
+    # player = Player.deserialize(session["player"])
 
     message = "Ready to play blackjack"
     game_message = ""
@@ -55,6 +60,11 @@ def index(name=None):
 
         if player.blackjack == True and dealer.sum != 21:
             game_message = "Natural blackjack! You are rewarded based on 3:2 odds."
+            #TODO: Add break functionality 
+
+        elif player.blackjack == True and dealer.sum == 21:
+            game_message = "Both dealer and player got natural blackjack, its a push (tie)."
+            #TODO: Add break functionality 
 
       
 
@@ -87,5 +97,6 @@ def index(name=None):
         "index.html",
         player=player,
         dealer=dealer,
-        message=message
+        message=message,
+        game_message=game_message
     )

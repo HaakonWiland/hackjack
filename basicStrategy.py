@@ -1,13 +1,29 @@
 # This works, but is there a better way?
 
 class gameState:
-    def __init__(self, PlayerTotal: int, DealerTotal: int, PlayerAce: bool, PlayerHand : list, SoftTotalPossible: bool):
+    def __init__(self, 
+    PlayerTotal: int, 
+    DealerTotal: int, 
+    PlayerAce: bool, 
+    PlayerHand : list, 
+    SoftTotalPossible: bool,
+    GameAlive: bool = True):
+
         self.playerTotal = PlayerTotal
         self.dealerTotal = DealerTotal
         self.state = (self.playerTotal, self.dealerTotal)
         self.playerAce = PlayerAce
         self.playerHand = PlayerHand
         self.softTotalPossible = SoftTotalPossible 
+        self.gameAlive = GameAlive # This overrides the default value? 
+
+    # TODO: 
+    def serialize():
+        pass 
+    
+    # TODO: 
+    def deserialize():
+        pass 
         
     def __str__(self):
         return f"Player: {self.playerTotal} \nDealer: {self.dealerTotal} \n"
