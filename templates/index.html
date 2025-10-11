@@ -15,6 +15,10 @@
         <h2>DEALER</h2>
         <p>Visible Card: {{ dealer.hand[0] if dealer.hand else "No cards yet" }}</p>
         <p>Dealer Sum: {{ dealer.hand[0].value }}</p>
+        <img src="{{ url_for('static', filename='cards/' + dealer.hand[0].image_filename()) }}" 
+         width="100">
+
+
     {% else %}
         <h2>Error: Cannot access dealer</h2>
     {% endif %}
@@ -23,6 +27,11 @@
         <h2>PLAYER</h2>
         <p>Cards: {{ player.hand if player.hand else "No cards yet" }}</p>
         <p>Player Sum: {{ player.sum }}</p>
+        {% for card in player.hand %}
+            <img src="{{ url_for('static', filename='cards/' + card.image_filename()) }}" 
+            alt="{{ card.valueStr }} of {{ card.suit }}"
+            width="100">
+        {% endfor %}
     {% else %}
         <h2>Error: Cannot access player</h2>
 

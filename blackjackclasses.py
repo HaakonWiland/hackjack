@@ -27,14 +27,15 @@ class Card:
     def __repr__(self):
         return self.__str__()
 
-
-    #TODO: Serialize and dezerialize. 
     def serialize(self):
         return {"value": self.value, "suit": self.suit}
     
     @classmethod
     def deserialize(cls, card_data: dict):
         return cls(card_data["value"], card_data["suit"])
+
+    def image_filename(self):
+        return f"{self.valueStr}_of_{self.suit}.png"
 
 # TODO: We want value and suit to only have "value" and "suit" as possible values
 
