@@ -1,5 +1,5 @@
 from blackjackclasses import CardDeck, Player, Card
-from basicStrategy import gameState 
+from basicStrategy import GameState 
 
 def playHand(deck : CardDeck, handDir, dealer: Player): 
     while not handDir["done"] and handDir["sum"] <= 21:
@@ -75,7 +75,7 @@ def blackjackGame():
             break
 
         ### FINDING BEST MOVE: 
-        state = gameState(player.sum, dealerVisible, player.hasAce, player.hand, player.softTotalPossible)
+        state = GameState(player.sum, dealerVisible, player.hasAce, player.hand, player.softTotalPossible)
         bestMove = state.bestMove()
         print(f"Best more: {bestMove}\n")
         ### 

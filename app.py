@@ -1,23 +1,25 @@
 from flask import Flask, render_template, request, session, url_for, redirect
 from blackjackclasses import CardDeck, Player, Card
-from basicStrategy import gameState
+from basicStrategy import GameState
 
 app = Flask(__name__)
 app.secret_key = "1234" #TODO: Change this.
 
 
-def save_session():
+def save_session(deck, dealer, player, gameState):
     session["deck"] = deck.serialize()
     session["dealer"] = dealer.serialize()
     session["player"] = player.serialize()
+    session["gameState"] = gameState.serialize()
 
 
 def load_session():
     deck = CardDeck.deserialize(session["deck"])
     dealer = Player.deserialize(session["dealer"])
     player = Player.deserialize(session["player"])
+    gameState = GameState.deserialize(session["gameState"])
 
-    return deck, dealer, player
+    return deck, dealer, player, gameState
 
 
 def init_game():
@@ -30,10 +32,13 @@ def init_game():
     player.newCard(deck)
     player.newCard(deck)
 
+
     #TODO: Create state object and save it into the session. 
+    gameState = GameState(player.sum, dealer.sum, player.hasAce, player.hand, True, True)
+
 
     # Dicts represetning the object data 
-    save_session() 
+    save_session(deck, dealer, player, gameState) 
 
 
     # session["deck"] = deck.serialize()
@@ -44,22 +49,24 @@ def init_game():
 
 @app.route("/", methods=["GET", "POST"])
 def index(name=None):
-    if "deck" not in session:
+    # Make sure we have all components needed to play a game. 
+    if not all(k in session for k in ("deck", "dealer", "player", "gameState")):
         init_game()
 
-    deck, dealer, player = load_session()
+    deck, dealer, player, gameState = load_session()
 
     # deck = CardDeck.deserialize(session["deck"])
     # dealer = Player.deserialize(session["dealer"])
     # player = Player.deserialize(session["player"])
 
-    message = "Ready to play blackjack"
+    message = f"Ready to play blackjack (Gamestate {gameState.gameAlive})"
     game_message = ""
 
     if player.sum <= 21: 
 
         if player.blackjack == True and dealer.sum != 21:
             game_message = "Natural blackjack! You are rewarded based on 3:2 odds."
+
             #TODO: Add break functionality 
 
         elif player.blackjack == True and dealer.sum == 21:
