@@ -3,6 +3,12 @@
 {% block title %}Hackjack{% endblock %}
 
 {% block content %}
+    {% if message %}
+        <h2>{{message}}</h2>
+    {% endif %}
+
+
+
     {% if dealer %}
         <h2>DEALER</h2>
         <p>Visible Card: {{ dealer.hand[0] if dealer.hand else "No cards yet" }}</p>

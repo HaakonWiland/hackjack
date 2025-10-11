@@ -64,7 +64,16 @@ class CardDeck:
 
     @classmethod
     def deserialize(cls, cardDeck_data):
-        return cls(cardDeck_data["deck"])
+        cardDeck_reconstruct: list[tuple] = []
+        
+        # A list of dicts, where each dict represents a card 
+        cardDeck_list = cardDeck_data["deck"]
+
+        for card_dict in cardDeck_list:
+            card = Card(card_dict["value"], card_dict["suit"])
+            cardDeck_reconstruct.append(card)
+
+        return cls(cardDeck_reconstruct)
 
     def getDeck(self):
         return self.cardDeck
