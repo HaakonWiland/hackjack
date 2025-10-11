@@ -50,16 +50,18 @@ def init_game():
 @app.route("/", methods=["GET", "POST"])
 def index(name=None):
     # Make sure we have all components needed to play a game. 
-    if not all(k in session for k in ("deck", "dealer", "player", "gameState")):
+    # if not all(k in session for k in ("deck", "dealer", "player", "gameState")):
+    #     init_game()
+
+    if request.method == "GET":
         init_game()
+
+
 
     deck, dealer, player, gameState = load_session()
 
-    # deck = CardDeck.deserialize(session["deck"])
-    # dealer = Player.deserialize(session["dealer"])
-    # player = Player.deserialize(session["player"])
 
-    message = f"Ready to play blackjack (Gamestate {gameState.gameAlive})"
+    message = f"Ready to play blackjack (Gamestate: {gameState.gameAlive})"
     game_message = ""
 
     if player.sum <= 21: 
@@ -81,8 +83,16 @@ def index(name=None):
         match action: 
 
             case "hit":
-                # print("hit")
-                pass
+                player.newCard(deck)
+                
+                if (player.sum == 21):
+                    game_message = "BLACKJACK! Player wins, house loses."
+                    gameState.gameAlive = False
+                
+                elif (player.sum > 21):
+                    game_message = f"Player busts: {player.sum}, house wins, player loses."
+                    gameState.gameAlive = False
+                
             
             case "stand":
                 pass
@@ -92,14 +102,27 @@ def index(name=None):
 
             case "split pair":
                 pass
+            case "reset":
+                init_game()
+                return redirect(url_for("index"))
 
         # Save the changes from last action 
+        # TODO: Clean this stuff up. 
         session["deck"] = deck.serialize()
         session["dealer"] = dealer.serialize()
-        session["player"] = player.serialize()  
-        return redirect(url_for("index"))        
-    
+        session["player"] = player.serialize()
+        session["gameState"] = gameState.serialize()  
+        session["game_message"] = game_message
 
+        return render_template(
+            "index.html",
+            player=player,
+            dealer=dealer,
+            message=message,
+            game_message=game_message
+        )     
+           
+            
     return render_template(
         "index.html",
         player=player,
@@ -107,3 +130,4 @@ def index(name=None):
         message=message,
         game_message=game_message
     )
+
