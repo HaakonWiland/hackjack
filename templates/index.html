@@ -3,50 +3,60 @@
 {% block title %}Hackjack{% endblock %}
 
 {% block content %}
-    {% if message %}
-        <h2>{{message}}</h2>
-    {% endif %}
+    <h2 id="message">Ready to play blackjack (Gamestate: {{ gameState.gameAlive }})</h2>
+    <p id="game_message">Waiting for player action..</p>
 
-    {% if game_message %}
-        <p>{{game_message}}</p>
-    {% endif %}
 
-    {% if dealer %}
-        <h2>DEALER</h2>
-        <p>Visible Card: {{ dealer.hand[0] if dealer.hand else "No cards yet" }}</p>
-        <p>Dealer Visible Sum: {{ dealer.hand[0].value }}, Dealer Total Sum: {{ dealer.sum }} </p>
-        {% for card in dealer.hand %}
-            <img src="{{ url_for('static', filename='cards/' + card.image_filename()) }}" 
-            alt="{{ card.valueStr }} of {{ card.suit }}"
-            width="100">
+    <h3>Dealer</h3>
+    <p id="dealer-sum">Dealer Sum: {{ dealer.sum }}</p>
+    <p>Dealer Visible Sum: {{ dealer.hand[0].value }}, Dealer Total Sum: {{ dealer.sum }} </p>
+    <div id="dealer-sum"> 
+         {% for card in dealer.hand %}
+            <img src="{{ url_for('static', filename='cards/' + card.image_filename()) }}" width="100">
         {% endfor %}
+    </div>
+   
 
-
-
-    {% else %}
-        <h2>Error: Cannot access dealer</h2>
-    {% endif %}
-
-    {% if player %}
-        <h2>PLAYER</h2>
-        <p>Cards: {{ player.hand if player.hand else "No cards yet" }}</p>
-        <p>Player Sum: {{ player.sum }}</p> 
+    <h3>Player</h3>
+    <p id="player-sum">Player Sum: {{ player.sum }}</p>
+    <div id="player-cards">
         {% for card in player.hand %}
-            <img src="{{ url_for('static', filename='cards/' + card.image_filename()) }}" 
-            alt="{{ card.valueStr }} of {{ card.suit }}"
-            width="100">
+            <img src="{{ url_for('static', filename='cards/' + card.image_filename()) }}" width="100">
         {% endfor %}
-    {% else %}
-        <h2>Error: Cannot access player</h2>
+    </div>
 
-    {% endif %}
 
-    <form method="POST">
-        <button type="submit" name="action" value="hit">Hit</button>
-        <button type="submit" name="action" value="stand">Stand</button>
-        <button type="submit" name="action" value="stand">Double</button>
-        <button type="submit" name="action" value="stand">Split</button>
-        <button type="submit" name="action" value="reset">Reset Game</button>
-    </form>
+    <div id="controls">
+        <button onclick="sendAction('hit')">Hit</button>
+        <button onclick="sendAction('stand')">Stand</button>
+        <button onclick="sendAction('double')">Double</button>
+        <button onclick="sendAction('split')">Split</button>
+        <button onclick="sendAction('reset')">Reset Game</button>
+    </div>
+
+    <script>
+    async function sendAction(action) {
+        const response = await fetch("/action", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: action })
+        });
+
+        // Gets the jsonify'ed data from handle_action(). 
+        const data = await response.json();
+
+        // Update message text dynamically
+        document.querySelector("#message").innerText = `Ready to play blackjack (Gamestate: ${data.gameAlive})`;
+        document.querySelector("#game_message").innerText = `GAME MESSAGE: ${data.game_message})`;
+
+        document.querySelector("#dealer-sum").innerText = `Dealer sum: ${data.dealer.sum}`;
+        document.querySelector("#player-sum").innerText = `Player sum: ${data.player.sum}`;
+
+        // TODO: You can later animate or update cards dynamically here
+
+        // For debugging.    
+        console.log("Response data:", data);
+    }
+    </script>
 
 {% endblock %}
