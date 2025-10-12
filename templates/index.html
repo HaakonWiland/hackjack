@@ -10,9 +10,9 @@
     <h3>Dealer</h3>
     <p id="dealer-sum">Dealer Sum: {{ dealer.sum }}</p>
     <p>Dealer Visible Sum: {{ dealer.hand[0].value }}, Dealer Total Sum: {{ dealer.sum }} </p>
-    <div id="dealer-sum"> 
+    <div id="dealer-cards"> 
          {% for card in dealer.hand %}
-            <img src="{{ url_for('static', filename='cards/' + card.image_filename()) }}" width="100">
+            <img src="{{ url_for('static', filename='cards/' + card.get_image_filename()) }}" width="100">
         {% endfor %}
     </div>
    
@@ -21,7 +21,7 @@
     <p id="player-sum">Player Sum: {{ player.sum }}</p>
     <div id="player-cards">
         {% for card in player.hand %}
-            <img src="{{ url_for('static', filename='cards/' + card.image_filename()) }}" width="100">
+            <img src="{{ url_for('static', filename='cards/' + card.get_image_filename()) }}" width="100">
         {% endfor %}
     </div>
 
@@ -47,12 +47,37 @@
 
         // Update message text dynamically
         document.querySelector("#message").innerText = `Ready to play blackjack (Gamestate: ${data.gameAlive})`;
-        document.querySelector("#game_message").innerText = `GAME MESSAGE: ${data.game_message})`;
+        document.querySelector("#game_message").innerText = `GAME MESSAGE: ${data.game_message}`;
 
+
+        // Update sums 
         document.querySelector("#dealer-sum").innerText = `Dealer sum: ${data.dealer.sum}`;
         document.querySelector("#player-sum").innerText = `Player sum: ${data.player.sum}`;
 
-        // TODO: You can later animate or update cards dynamically here
+        // Update display card 
+        const playerCardDiv = document.querySelector("#player-cards");
+        const dealerCardDiv = document.querySelector("#dealer-cards");
+
+        playerCardDiv.innerHTML = "";
+        dealerCardDiv.innerHTML = "";
+
+        for (const card of data.player.hand) {
+            const img = document.createElement("img");
+            img.src = `/static/cards/${card.filename}`;
+            img.width = 100;
+            playerCardDiv.appendChild(img);
+        }
+
+        for (const card of data.dealer.hand) {
+            const img = document.createElement("img");
+            img.src = `/static/cards/${card.filename}`;
+            img.width = 100;
+            dealerCardDiv.appendChild(img);
+        }
+
+
+
+        // TODO: Animations for actions 
 
         // For debugging.    
         console.log("Response data:", data);

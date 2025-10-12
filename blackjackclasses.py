@@ -20,6 +20,8 @@ class Card:
             self.value = int(Value)
             self.valueStr = Value
             self.ace = False
+
+        self.image_filename = f"{self.valueStr}_of_{self.suit}.png"
     
     def __str__(self):
         return f"{self.valueStr} of {self.suit}"
@@ -28,13 +30,13 @@ class Card:
         return self.__str__()
 
     def serialize(self):
-        return {"value": self.valueStr, "suit": self.suit}
+        return {"value": self.valueStr, "suit": self.suit, "filename": self.image_filename}
     
     @classmethod
     def deserialize(cls, card_data: dict):
         return cls(card_data["value"], card_data["suit"])
 
-    def image_filename(self):
+    def get_image_filename(self):
         return f"{self.valueStr}_of_{self.suit}.png"
 
 # TODO: We want value and suit to only have "value" and "suit" as possible values
