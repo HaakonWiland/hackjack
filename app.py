@@ -49,14 +49,9 @@ def init_game():
 
 @app.route("/", methods=["GET", "POST"])
 def index(name=None):
-    # Make sure we have all components needed to play a game. 
-    # if not all(k in session for k in ("deck", "dealer", "player", "gameState")):
-    #     init_game()
 
     if request.method == "GET":
         init_game()
-
-
 
     deck, dealer, player, gameState = load_session()
 
@@ -68,11 +63,12 @@ def index(name=None):
 
         if player.blackjack == True and dealer.sum != 21:
             game_message = "Natural blackjack! You are rewarded based on 3:2 odds."
-
+            gameState.gameAlive = False  
             #TODO: Add break functionality 
 
         elif player.blackjack == True and dealer.sum == 21:
             game_message = "Both dealer and player got natural blackjack, its a push (tie)."
+            gameState.gameAlive = False 
             #TODO: Add break functionality 
 
       
@@ -95,7 +91,23 @@ def index(name=None):
                 
             
             case "stand":
-                pass
+                while dealer.sum <= 16:
+                    dealer.newCard(deck)
+                
+                if dealer.sum > 21:
+                    game_message = f"Dealer busts: {dealer.sum}, player wins, house loses."
+                    gameState.gameAlive = False
+
+                elif dealer.sum > player.sum:
+                    game_message = f"Dealer has higher hand, house wins, player loses."
+                
+                elif dealer.sum == player.sum:
+                    game_message = f"Tie, player bet gets returned."
+                    gameState.gameAlive = False
+
+                elif dealer.sum < player.sum:
+                    game_message = f"Player wins, house loses."
+                    gameState.gameAlive = False
 
             case "double":
                 pass
@@ -106,13 +118,12 @@ def index(name=None):
                 init_game()
                 return redirect(url_for("index"))
 
-        # Save the changes from last action 
-        # TODO: Clean this stuff up. 
-        session["deck"] = deck.serialize()
-        session["dealer"] = dealer.serialize()
-        session["player"] = player.serialize()
-        session["gameState"] = gameState.serialize()  
+        # Save the changes from last action          
+        save_session(deck, dealer, player, gameState) 
         session["game_message"] = game_message
+        
+        # Recompute message since we updated the state. 
+        message = f"Ready to play blackjack (Gamestate: {gameState.gameAlive})"
 
         return render_template(
             "index.html",
