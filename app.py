@@ -52,25 +52,50 @@ def index():
     init_game()
 
     deck, dealer, player, gameState = load_session()
+    game_message = f"Ready to play blackjack (Gamestate: {gameState.gameAlive})" 
+
+    #TODO: Handle natural blackjack and natural tie. 
+    if player.blackjack == True and dealer.sum != 21:
+        game_message = "Natural blackjack! You are rewarded based on 3:2 odds."
+        gameState.gameAlive = False 
+
+    elif player.blackjack == True and dealer.sum == 21:
+        game_message = "Both dealer and player got natural blackjack, its a push (tie)."
+        gameState.gameAlive = False 
 
     return render_template(
         "index.html",
         player=player,
         dealer=dealer,
+        message=game_message,
         gameState=gameState,
-        message=f"Ready to play blackjack (Gamestate: {gameState.gameAlive})"
     )
 
 @app.route("/action", methods=["POST"])
 def handle_action():
+
+
     data = request.get_json()
     action = data.get("action")
 
-    
     deck, dealer, player, gameState = load_session()
-    game_message = ""
+    # Do not allow to play after game has ended. 
+    if gameState.gameAlive == False and action != "reset":
 
-    #TODO: Handle natural blackjack and natural tie. 
+        game_message = "Game has ended, hit the 'Reset Game' button"
+
+        return jsonify({
+        "player": player.serialize(),
+        "dealer": dealer.serialize(),
+        "game_message": game_message,
+        "gameState": gameState.serialize(),
+        "gameAlive": gameState.gameAlive
+    })
+
+    game_message = ""
+    
+    # deck, dealer, player, gameState = load_session()
+    # game_message = ""
 
     match action:
         case "hit":
@@ -89,17 +114,61 @@ def handle_action():
 
             if dealer.sum > 21:
                 game_message = f"Dealer busts ({dealer.sum}), player wins."
+                gameState.gameAlive = False
 
             elif dealer.sum > player.sum:
                 game_message = "Dealer wins."
+                gameState.gameAlive = False
 
             elif dealer.sum < player.sum:
                 game_message = "Player wins!"
+                gameState.gameAlive = False
        
             else:
                 game_message = "Push (tie)."
+                gameState.gameAlive = False
 
             gameState.gameAlive = False
+        
+        case "double":
+            player.newCard(deck)
+            
+            if player.sum > 21:
+                game_message = f"Player busts, Dealer wins."
+                gameState.gameAlive = False
+
+                # Return so we exit the block
+                return jsonify({
+                    "player": player.serialize(),
+                    "dealer": dealer.serialize(),
+                    "game_message": game_message,
+                    "gameState": gameState.serialize(),
+                    "gameAlive": gameState.gameAlive
+                })
+
+            while dealer.sum <= 16:
+                dealer.newCard(deck)
+
+            if dealer.sum > 21:
+                game_message = f"DEALER busts: {dealer.sum}\nPlayer wins, house loses."
+                gameState.gameAlive = False
+
+            elif dealer.sum > player.sum:
+                game_message = f"The house wins, player loses."
+                gameState.gameAlive = False
+                
+            elif dealer.sum == player.sum:
+                game_message = f"Tie, players bet gets returned."
+                gameState.gameAlive = False
+            
+            elif (dealer.sum < player.sum):
+                game_message = f"Player wins, house loses."
+                gameState.gameAlive = False 
+                  
+
+        case "split":
+            # Should only be possible if we got pair. 
+            pass 
 
         case "reset":
             init_game()
@@ -108,10 +177,12 @@ def handle_action():
 
     save_session(deck, dealer, player, gameState)
 
+    #TODO: Should send in gameState aswell, and do stuff with it. 
     return jsonify({
         "player": player.serialize(),
         "dealer": dealer.serialize(),
         "game_message": game_message,
+        "gameState": gameState.serialize(),
         "gameAlive": gameState.gameAlive
     })
 

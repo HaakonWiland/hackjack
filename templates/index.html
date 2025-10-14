@@ -9,7 +9,7 @@
 
     <h3>Dealer</h3>
     <p id="dealer-sum">Dealer Sum: {{ dealer.sum }}</p>
-    <p>Dealer Visible Sum: {{ dealer.hand[0].value }}, Dealer Total Sum: {{ dealer.sum }} </p>
+    <p>Dealer Visible Sum: {{ dealer.hand[0].value }}</p>
     <div id="dealer-cards"> 
          {% for card in dealer.hand %}
             <img src="{{ url_for('static', filename='cards/' + card.get_image_filename()) }}" width="100">
