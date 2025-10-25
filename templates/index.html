@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}Hackjack{% endblock %}
-
 {% block content %}
+<div class="game-container"> 
     <h2 id="message">Ready to play blackjack (Gamestate: {{ gameState.gameAlive }})</h2>
     <p id="game_message">Waiting for player action..</p>
 
+    <!--TOOD: Center all this stuff to align with the player hand(s)-->
 
     <h3>Dealer</h3>
     <p id="dealer-sum">Dealer Sum: {{ dealer.sum }}</p>
-    <p>Dealer Visible Sum: {{ dealer.hand[0].value }}</p>
+    <p id="dealer-visible-sum">Dealer Visible Sum: {{ dealer.hand[0].value }}</p>
     <div id="dealer-cards"> 
          {% for card in dealer.hand %}
             <img src="{{ url_for('static', filename='cards/' + card.get_image_filename()) }}" width="100">
@@ -19,10 +19,19 @@
 
     <h3>Player</h3>
     <p id="player-sum">Player Sum: {{ player.sum }}</p>
-    <div id="player-cards">
+
+    <div id="player-cards" class="hands-container">
+        <div id="player-hand-1" class="player-hand">
         {% for card in player.hand %}
             <img src="{{ url_for('static', filename='cards/' + card.get_image_filename()) }}" width="100">
         {% endfor %}
+        </div>
+
+        <div id="player-hand-2" class="player-hand.hidden">
+
+        </div>
+
+
     </div>
 
 
@@ -33,55 +42,7 @@
         <button onclick="sendAction('split')">Split</button>
         <button onclick="sendAction('reset')">Reset Game</button>
     </div>
+</div>
 
-    <script>
-    async function sendAction(action) {
-        const response = await fetch("/action", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ action: action })
-        });
-
-        // Gets the jsonify'ed data from handle_action(). 
-        const data = await response.json();
-
-        // Update message text dynamically
-        document.querySelector("#message").innerText = `Ready to play blackjack (Gamestate: ${data.gameAlive})`;
-        document.querySelector("#game_message").innerText = `GAME MESSAGE: ${data.game_message}`;
-
-
-        // Update sums 
-        document.querySelector("#dealer-sum").innerText = `Dealer sum: ${data.dealer.sum}`;
-        document.querySelector("#player-sum").innerText = `Player sum: ${data.player.sum}`;
-
-        // Update display card 
-        const playerCardDiv = document.querySelector("#player-cards");
-        const dealerCardDiv = document.querySelector("#dealer-cards");
-
-        playerCardDiv.innerHTML = "";
-        dealerCardDiv.innerHTML = "";
-
-        for (const card of data.player.hand) {
-            const img = document.createElement("img");
-            img.src = `/static/cards/${card.filename}`;
-            img.width = 100;
-            playerCardDiv.appendChild(img);
-        }
-
-        for (const card of data.dealer.hand) {
-            const img = document.createElement("img");
-            img.src = `/static/cards/${card.filename}`;
-            img.width = 100;
-            dealerCardDiv.appendChild(img);
-        }
-
-
-
-        // TODO: Animations for actions 
-
-        // For debugging.    
-        console.log("Response data:", data);
-    }
-    </script>
 
 {% endblock %}

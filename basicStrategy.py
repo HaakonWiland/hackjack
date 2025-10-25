@@ -1,6 +1,7 @@
 from blackjackclasses import Card
 
-
+# TODO: This should probably have take in the deck as argument
+# such that we can keep track of available cards at a given state. 
 class GameState:
     def __init__(self, 
     PlayerTotal: int, 

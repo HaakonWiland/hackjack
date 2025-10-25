@@ -31,19 +31,14 @@ def init_game():
     dealer.newCard(deck)
     player.newCard(deck)
     player.newCard(deck)
+    # player.appendCard(Card("2", "diamonds"))
+    # player.appendCard(Card("2", "hearts"))
 
-
-    #TODO: Create state object and save it into the session. 
     gameState = GameState(player.sum, dealer.sum, player.hasAce, player.hand, True, True)
 
 
     # Dicts represetning the object data 
     save_session(deck, dealer, player, gameState) 
-
-
-    # session["deck"] = deck.serialize()
-    # session["dealer"] = dealer.serialize()
-    # session["player"] = player.serialize()
 
 
 @app.route("/", methods=["GET"])
@@ -54,7 +49,7 @@ def index():
     deck, dealer, player, gameState = load_session()
     game_message = f"Ready to play blackjack (Gamestate: {gameState.gameAlive})" 
 
-    #TODO: Handle natural blackjack and natural tie. 
+    #TODO: Handle natural blackjack and natural tie -> Do not work atm.  
     if player.blackjack == True and dealer.sum != 21:
         game_message = "Natural blackjack! You are rewarded based on 3:2 odds."
         gameState.gameAlive = False 
@@ -73,8 +68,6 @@ def index():
 
 @app.route("/action", methods=["POST"])
 def handle_action():
-
-
     data = request.get_json()
     action = data.get("action")
 
@@ -87,15 +80,13 @@ def handle_action():
         return jsonify({
         "player": player.serialize(),
         "dealer": dealer.serialize(),
+        "split": False,
         "game_message": game_message,
         "gameState": gameState.serialize(),
         "gameAlive": gameState.gameAlive
     })
 
     game_message = ""
-    
-    # deck, dealer, player, gameState = load_session()
-    # game_message = ""
 
     match action:
         case "hit":
@@ -141,6 +132,7 @@ def handle_action():
                 return jsonify({
                     "player": player.serialize(),
                     "dealer": dealer.serialize(),
+                    "split": False,
                     "game_message": game_message,
                     "gameState": gameState.serialize(),
                     "gameAlive": gameState.gameAlive
@@ -168,6 +160,37 @@ def handle_action():
 
         case "split":
             # Should only be possible if we got pair. 
+            if player.hand[0].value != player.hand[1].value:
+                game_message = "You do not have equal values, you can not split!"
+                return jsonify({
+                    "player": player.serialize(),
+                    "dealer": dealer.serialize(),
+                    "split": False, 
+                    "game_message": game_message,
+                    "gameState": gameState.serialize(),
+                    "gameAlive": gameState.gameAlive
+                })
+
+            splitHands = [
+                {"cards": [player.hand[0]], "sum": player.hand[0].value, "done": False},
+                {"cards": [player.hand[1]], "sum": player.hand[1].value, "done": False},
+            ]
+
+            # TODO: prob. not the optimal structure for return data. 
+            return jsonify({
+                "player": player.serialize(),
+                "dealer": dealer.serialize(),
+                "split": True,
+                "split_cards": [
+                    {"filename": player.hand[0].image_filename},
+                    {"filename": player.hand[1].image_filename}
+                ],
+                "game_message": game_message,
+                "gameAlive": gameState.gameAlive
+            })
+
+            #TODO: Need some animation to visually split up the pairs. 
+            #TODO: Then we need to have some functions that play a hand, and play the dealer. 
             pass 
 
         case "reset":
@@ -181,107 +204,10 @@ def handle_action():
     return jsonify({
         "player": player.serialize(),
         "dealer": dealer.serialize(),
+        "split": False,
         "game_message": game_message,
         "gameState": gameState.serialize(),
         "gameAlive": gameState.gameAlive
     })
 
-
-# @app.route("/", methods=["GET", "POST"])
-# def index(name=None):
-
-#     if request.method == "GET":
-#         init_game()
-
-#     deck, dealer, player, gameState = load_session()
-
-
-#     message = f"Ready to play blackjack (Gamestate: {gameState.gameAlive})"
-#     game_message = ""
-
-#     if player.sum <= 21: 
-
-#         if player.blackjack == True and dealer.sum != 21:
-#             game_message = "Natural blackjack! You are rewarded based on 3:2 odds."
-#             gameState.gameAlive = False  
-#             #TODO: Add break functionality 
-
-#         elif player.blackjack == True and dealer.sum == 21:
-#             game_message = "Both dealer and player got natural blackjack, its a push (tie)."
-#             gameState.gameAlive = False 
-#             #TODO: Add break functionality 
-
-      
-
-#     if request.method == "POST":
-#         action = request.form.get("action")
-
-#         #TODO: We need animations when things change on the screen. 
-#         # Currently only preform the game changes, then reload the page 
-#         # This is not efficient or visually pleasing 
-#         match action: 
-
-#             case "hit":
-#                 player.newCard(deck)
-                
-#                 if (player.sum == 21):
-#                     game_message = "BLACKJACK! Player wins, house loses."
-#                     gameState.gameAlive = False
-                
-#                 elif (player.sum > 21):
-#                     game_message = f"Player busts: {player.sum}, house wins, player loses."
-#                     gameState.gameAlive = False
-                
-            
-#             case "stand":
-#                 while dealer.sum <= 16:
-#                     dealer.newCard(deck)
-                
-#                 if dealer.sum > 21:
-#                     game_message = f"Dealer busts: {dealer.sum}, player wins, house loses."
-#                     gameState.gameAlive = False
-
-#                 elif dealer.sum > player.sum:
-#                     game_message = f"Dealer has higher hand, house wins, player loses."
-                
-#                 elif dealer.sum == player.sum:
-#                     game_message = f"Tie, player bet gets returned."
-#                     gameState.gameAlive = False
-
-#                 elif dealer.sum < player.sum:
-#                     game_message = f"Player wins, house loses."
-#                     gameState.gameAlive = False
-
-#             case "double":
-#                 pass
-
-#             case "split pair":
-#                 pass
-#             case "reset":
-#                 init_game()
-#                 return redirect(url_for("index"))
-
-#         # Save the changes from last action          
-#         save_session(deck, dealer, player, gameState) 
-#         session["game_message"] = game_message
-        
-#         # Recompute message since we updated the state. 
-#         message = f"Ready to play blackjack (Gamestate: {gameState.gameAlive})"
-
-#         return render_template(
-#             "index.html",
-#             player=player,
-#             dealer=dealer,
-#             message=message,
-#             game_message=game_message
-#         )     
-           
-            
-#     return render_template(
-#         "index.html",
-#         player=player,
-#         dealer=dealer,
-#         message=message,
-#         game_message=game_message
-#     )
 
