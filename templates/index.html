@@ -1,38 +1,48 @@
 {% extends "base.html" %}
 
-{% block title %}Hackjack{% endblock %}
-
 {% block content %}
-    {% if message %}
-        <h2>{{message}}</h2>
-    {% endif %}
+<div class="game-container"> 
+    <h2 id="message">Ready to play blackjack (Gamestate: {{ gameState.gameAlive }})</h2>
+    <p id="game_message">Waiting for player action..</p>
 
-    {% if game_message %}
-        <p>{{game_message}}</p>
-    {% endif %}
+    <!--TOOD: Center all this stuff to align with the player hand(s)-->
 
-    {% if dealer %}
-        <h2>DEALER</h2>
-        <p>Visible Card: {{ dealer.hand[0] if dealer.hand else "No cards yet" }}</p>
-        <p>Dealer Sum: {{ dealer.hand[0].value }}</p>
-    {% else %}
-        <h2>Error: Cannot access dealer</h2>
-    {% endif %}
+    <h3>Dealer</h3>
+    <p id="dealer-sum">Dealer Sum: {{ dealer.sum }}</p>
+    <p id="dealer-visible-sum">Dealer Visible Sum: {{ dealer.hand[0].value }}</p>
+    <div id="dealer-cards"> 
+         {% for card in dealer.hand %}
+            <img src="{{ url_for('static', filename='cards/' + card.get_image_filename()) }}" width="100">
+        {% endfor %}
+    </div>
+   
 
-    {% if player %}
-        <h2>PLAYER</h2>
-        <p>Cards: {{ player.hand if player.hand else "No cards yet" }}</p>
-        <p>Player Sum: {{ player.sum }}</p>
-    {% else %}
-        <h2>Error: Cannot access player</h2>
+    <h3>Player</h3>
+    <p id="player-sum">Player Sum: {{ player.sum }}</p>
 
-    {% endif %}
+    <div id="player-cards" class="hands-container">
+        <div id="player-hand-1" class="player-hand">
+        {% for card in player.hand %}
+            <img src="{{ url_for('static', filename='cards/' + card.get_image_filename()) }}" width="100">
+        {% endfor %}
+        </div>
 
-    <form method="POST">
-        <button type="submit" name="action" value="hit">Hit</button>
-        <button type="submit" name="action" value="stand">Stand</button>
-        <button type="submit" name="action" value="stand">Double</button>
-        <button type="submit" name="action" value="stand">Split</button>
-    </form>
+        <div id="player-hand-2" class="player-hand.hidden">
+
+        </div>
+
+
+    </div>
+
+
+    <div id="controls">
+        <button onclick="sendAction('hit')">Hit</button>
+        <button onclick="sendAction('stand')">Stand</button>
+        <button onclick="sendAction('double')">Double</button>
+        <button onclick="sendAction('split')">Split</button>
+        <button onclick="sendAction('reset')">Reset Game</button>
+    </div>
+</div>
+
 
 {% endblock %}

@@ -1,6 +1,8 @@
-# This works, but is there a better way?
+from blackjackclasses import Card
 
-class gameState:
+# TODO: This should probably have take in the deck as argument
+# such that we can keep track of available cards at a given state. 
+class GameState:
     def __init__(self, 
     PlayerTotal: int, 
     DealerTotal: int, 
@@ -17,13 +19,39 @@ class gameState:
         self.softTotalPossible = SoftTotalPossible 
         self.gameAlive = GameAlive # This overrides the default value? 
 
-    # TODO: 
-    def serialize():
-        pass 
-    
-    # TODO: 
-    def deserialize():
-        pass 
+    def serialize(self):
+
+        playerHand_serialized = [card.serialize() for card in self.playerHand]
+
+        return {
+            "playerTotal": self.playerTotal,
+            "dealerTotal": self.dealerTotal,
+            "playerAce": self.playerAce,
+            "playerHand": playerHand_serialized,
+            "softTotalPossible": self.softTotalPossible,
+            "gameAlive": self.gameAlive
+        }
+
+    @classmethod
+    def deserialize(cls, state_data: dict):
+        playerHand_reconstruct: list = []
+
+        playerHand_list = state_data["playerHand"]
+
+        for card_dict in playerHand_list:
+            card = Card(card_dict["value"], card_dict["suit"])
+            playerHand_reconstruct.append(card) 
+
+
+        return cls(
+            state_data["playerTotal"],
+            state_data["dealerTotal"],
+            state_data["playerAce"],
+            playerHand_reconstruct,
+            state_data["softTotalPossible"],
+            state_data["gameAlive"]
+        )
+        
         
     def __str__(self):
         return f"Player: {self.playerTotal} \nDealer: {self.dealerTotal} \n"
